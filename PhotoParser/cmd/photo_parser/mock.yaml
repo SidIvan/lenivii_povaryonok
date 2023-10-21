@@ -1,0 +1,2 @@
+port: 8080
+graceful.timeout.sec: 10
