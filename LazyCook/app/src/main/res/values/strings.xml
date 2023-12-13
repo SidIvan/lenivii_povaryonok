@@ -3,4 +3,5 @@
     <string name="enter_product_name">Enter product name</string>
     <string name="ErrorEmptyInput">Please enter something!</string>
     <string name="string">String</string>
+    <string name="create_recipe">Create Recipe</string>
 </resources>

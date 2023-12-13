@@ -1,5 +1,6 @@
 package com.example.lazycook
 
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -9,37 +10,43 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        private var items: ArrayList<String> = ArrayList()
+        private lateinit var adapter: ArrayAdapter<String>
+
+        fun addProductItem(item: String) {
+            items.add(item)
+            adapter.notifyDataSetChanged()
+        }
+
+        fun removeProductItem(index: Int) {
+            items.removeAt(index)
+            adapter.notifyDataSetChanged()
+        }
+    }
     private lateinit var productView: ListView
-    private var items: ArrayList<String> = ArrayList()
-    private lateinit var adapter: ArrayAdapter<String>
-    private lateinit var input: EditText
-    private lateinit var enter: ImageView
-
-    private fun addProductItem(item: String) {
-        items.add(item)
-        adapter.notifyDataSetChanged()
-    }
-
-    private fun removeProductItem(index: Int) {
-        items.removeAt(index)
-        adapter.notifyDataSetChanged()
-    }
+    private lateinit var inputLine: EditText
+    private lateinit var enterText: ImageView
+    private lateinit var cameraButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         productView = findViewById(R.id.listview)
-        input = findViewById(R.id.input)
-        enter = findViewById(R.id.add)
+        inputLine = findViewById(R.id.input)
+        enterText = findViewById(R.id.add)
         adapter = ArrayAdapter(applicationContext, android.R.layout.simple_list_item_1, items)
         productView.adapter = adapter
+        cameraButton = findViewById(R.id.camera)
 
-        enter.setOnClickListener(object : View.OnClickListener {
+        enterText.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View?) {
-                val text: String = input.text.toString()
+                val text: String = inputLine.text.toString()
                 if (text == null || text.isEmpty()) {
                     val toast = Toast.makeText(
                         applicationContext,
@@ -49,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                     toast.show()
                 } else {
                     addProductItem(text)
-                    input.setText("")
+                    inputLine.setText("")
                 }
             }
         })
@@ -65,5 +72,13 @@ class MainActivity : AppCompatActivity() {
                 return false
             }
         })
+
+        cameraButton.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                TODO("Not yet implemented")
+            }
+        })
+
+
     }
 }
