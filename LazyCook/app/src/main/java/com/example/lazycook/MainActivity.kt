@@ -1,8 +1,12 @@
 package com.example.lazycook
 
+import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -10,7 +14,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
@@ -28,10 +31,20 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
     }
+
+    private val PERMISSION_CODE = 1000
+    private val IMAGE_CAPTURE_CODE = 1001
     private lateinit var productView: ListView
     private lateinit var inputLine: EditText
     private lateinit var enterText: ImageView
     private lateinit var cameraButton: ImageView
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IMAGE_CAPTURE_CODE) {
+            val image: Bitmap = data?.extras?.get("data") as Bitmap
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,12 +61,11 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(view: View?) {
                 val text: String = inputLine.text.toString()
                 if (text == null || text.isEmpty()) {
-                    val toast = Toast.makeText(
+                    Toast.makeText(
                         applicationContext,
                         getString(R.string.ErrorEmptyInput),
                         Toast.LENGTH_SHORT
-                    )
-                    toast.show()
+                    ).show()
                 } else {
                     addProductItem(text)
                     inputLine.setText("")
@@ -73,12 +85,23 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        cameraButton.setOnClickListener(object: View.OnClickListener {
+        cameraButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                TODO("Not yet implemented")
+                var permissions: Array<String> = arrayOf()
+                if (ContextCompat.checkSelfPermission(
+                        applicationContext,
+                        Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_DENIED) {
+                    permissions += Manifest.permission.CAMERA
+                }
+                if (permissions.isNotEmpty()) {
+                    requestPermissions(permissions, PERMISSION_CODE)
+
+                }
+
+                val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
             }
         })
-
-
     }
 }
