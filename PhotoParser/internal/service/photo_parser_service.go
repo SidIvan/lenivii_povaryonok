@@ -41,7 +41,7 @@ func mockResult() []dto.Product {
 
 func (s *PhotoParserService) ParsePhoto(photo []byte) []dto.Product {
 	//"../yolov7/detect.py", "--weights", "weights.pt", "--img-size", "640", "--save-txt", "--nosave", "--source", "dist/fruits.jpg"
-	cmd := exec.Command("python3", "../yolov7/detect.py", "--weights", "cmd/photo_parser/weights.pt", "--img-size", "640", "--nosave")
+	cmd := exec.Command("python3", "../model/detect.py", "--weights", "cmd/photo_parser/weights.pt", "--img-size", "640", "--nosave")
 	cmd.Stdin = bytes.NewReader(photo)
 	res := bytes.NewBufferString("")
 	cmd.Stdout = res
