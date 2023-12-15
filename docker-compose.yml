@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    container_name: db
+    hostname: db
+    restart: always
+    environment:
+      - POSTGRES_DB=povaryonok
+      - POSTGRES_USER=povaryonok
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    networks:
+      - local
+  recipe_giver:
+    build:
+      context: recipe_giver
+    container_name: recipe_giver
+    hostname: recipe_giver
+    ports:
+      - "8081:8081"
+    restart: always
+    command: []
+    depends_on:
+      - db
+    networks:
+      - local
+networks:
+  local:
+    driver: bridge
